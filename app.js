@@ -10,8 +10,9 @@ app.get("/courses", (req, res) => {
 });
 
 app.get("/account/:id", (req, res) => {
-    console.log(req.params.id);
+  console.log(req.params.id);
 });
+
 //Do not remove this line. This allows the test suite to start
 //multiple instances of your server on different ports
 module.exports = app;
