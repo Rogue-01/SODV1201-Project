@@ -1,21 +1,20 @@
 //All your code goes here
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
+const express = require("express");
+const bodyParser = require("body-parser");
+const fs = require("fs");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-const coursesDb = './database/courses.json';
-const usersDb = './database/users.json';
+const coursesDb = "./database/courses.json";
+const usersDb = "./database/users.json";
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// GET /courses endpoint
-app.get('/courses', (req, res) => {
+app.get("/courses", (req, res) => {
   const { code, num } = req.query;
-  let courses = JSON.parse(fs.readFileSync(coursesDb, 'utf-8'));
+  let courses = JSON.parse(fs.readFileSync(coursesDb, "utf-8"));
 
   if (code) {
     courses = courses.filter((course) => course.code === code);
@@ -29,46 +28,44 @@ app.get('/courses', (req, res) => {
 });
 
 // GET /account/:id endpoint
-app.get('/account/:id', (req, res) => {
+app.get("/account/:id", (req, res) => {
   const { id } = req.params;
-  const users = JSON.parse(fs.readFileSync(usersDb, 'utf-8'));
+  const users = JSON.parse(fs.readFileSync(usersDb, "utf-8"));
 
   const user = users.find((user) => user.id === id);
 
   if (!user) {
-    res.status(404).json({ error: 'User not found' });
+    res.status(404).json({ error: "User not found" });
     return;
   }
 
   res.status(200).json({ user });
 });
 
-// POST /users/login endpoint
-app.post('/users/login', (req, res) => {
+app.post("/users/login", (req, res) => {
   const { username, password } = req.body;
-  const users = JSON.parse(fs.readFileSync(usersDb, 'utf-8'));
+  const users = JSON.parse(fs.readFileSync(usersDb, "utf-8"));
 
   const user = users.find(
     (user) => user.username === username && user.password === password
   );
 
   if (!user) {
-    res.status(401).json({ error: 'Invalid credentials' });
+    res.status(401).json({ error: "Invalid credentials" });
     return;
   }
 
   res.status(200).json({ userId: user.id });
 });
 
-// POST /users/signup endpoint
-app.post('/users/signup', (req, res) => {
+app.post("/users/signup", (req, res) => {
   const { username, password } = req.body;
-  const users = JSON.parse(fs.readFileSync(usersDb, 'utf-8'));
+  const users = JSON.parse(fs.readFileSync(usersDb, "utf-8"));
 
   const userExists = users.find((user) => user.username === username);
 
   if (userExists) {
-    res.status(409).json({ error: 'Username already in use' });
+    res.status(409).json({ error: "Username already in use" });
     return;
   }
 
@@ -79,15 +76,15 @@ app.post('/users/signup', (req, res) => {
   res.status(201).json({ userId: id });
 });
 
-app.patch('/account/:id/courses/add', (req, res) => {
+app.patch("/account/:id/courses/add", (req, res) => {
   const { id } = req.params;
   const { code, num, title, description } = req.body;
-  const users = JSON.parse(fs.readFileSync(usersDb, 'utf-8'));
+  const users = JSON.parse(fs.readFileSync(usersDb, "utf-8"));
 
   const user = users.find((user) => user.id === id);
 
   if (!user) {
-    res.status(404).json({ error: 'User not found' });
+    res.status(404).json({ error: "User not found" });
     return;
   }
 
@@ -96,7 +93,7 @@ app.patch('/account/:id/courses/add', (req, res) => {
   );
 
   if (courseExists) {
-    res.status(409).json({ error: 'Course already in user list' });
+    res.status(409).json({ error: "Course already in user list" });
     return;
   }
 
@@ -107,6 +104,38 @@ app.patch('/account/:id/courses/add', (req, res) => {
   res.status(201).json({ course: newCourse });
 });
 
+app.patch("/account/:id/courses/remove", (req, res) => {
+  const { id } = req.params;
+  const { code, num } = req.body;
+  const users = JSON.parse(fs.readFileSync(usersDb, "utf-8"));
+
+  const user = users.find((user) => user.id === id);
+
+  if (!user) {
+    res.status(404).json({ error: "User not found" });
+    return;
+  }
+
+  const courseExists = user.courses.find(
+    (course) => course.code === code && course.num === num
+  );
+
+  if (!courseExists) {
+    res.status(404).json({ error: "Course not found in user list" });
+    return;
+  }
+
+  user.courses = user.courses.filter(
+    (course) => course.code !== code && course.num !== num
+  );
+  fs.writeFileSync(usersDb, JSON.stringify(users));
+
+  res.status(200).json({ course: courseExists });
+});
+
+app.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
+});
 
 //Do not remove this line. This allows the test suite to start
 //multiple instances of your server on different ports
