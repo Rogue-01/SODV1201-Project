@@ -27,7 +27,22 @@ app.get("/courses", (req, res) => {
   res.status(200).json(courses);
 });
 
-// GET /account/:id endpoint
+app.get("/courses/:code/:num", (req, res) => {
+  const { code, num } = req.params;
+  const courses = JSON.parse(fs.readFileSync(coursesDb, "utf-8"));
+
+  const course = courses.find(
+    (course) => course.code === code && course.num === num
+  );
+
+  if (!course) {
+    res.status(404).json({ error: "Course not found" });
+    return;
+  }
+
+  res.status(200).json({ course });
+});
+
 app.get("/account/:id", (req, res) => {
   const { id } = req.params;
   const users = JSON.parse(fs.readFileSync(usersDb, "utf-8"));
@@ -51,7 +66,7 @@ app.post("/users/login", (req, res) => {
   );
 
   if (!user) {
-    res.status(401).json({ error: "Invalid credentials" });
+    res.status(404).json({ error: "Invalid credentials" });
     return;
   }
 
@@ -100,7 +115,6 @@ app.patch("/account/:id/courses/add", (req, res) => {
   const newCourse = { code, num, title, description };
   user.courses.push(newCourse);
   fs.writeFileSync(usersDb, JSON.stringify(users));
-
   res.status(201).json({ course: newCourse });
 });
 
@@ -131,6 +145,20 @@ app.patch("/account/:id/courses/remove", (req, res) => {
   fs.writeFileSync(usersDb, JSON.stringify(users));
 
   res.status(200).json({ course: courseExists });
+});
+
+app.get("/account/:id/courses", (req, res) => {
+  const { id } = req.params;
+  const users = JSON.parse(fs.readFileSync(usersDb, "utf-8"));
+
+  const user = users.find((user) => user.id === id);
+
+  if (!user) {
+    res.status(404).json({ error: "User not found" });
+    return;
+  }
+
+  res.status(200).json({ courses: user.courses });
 });
 
 app.listen(PORT, () => {
