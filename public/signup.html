@@ -7,13 +7,20 @@
     <title>signup</title>
   </head>
   <body>
-    <form action="/signup" method="POST">
-      <label for="email">Email</label>
-      <input type="email" name="email" id="email" />
-      <label for="password">Password</label>
+
+    <h1>signup</h1>
+
+    <a href="index.html">main page</a>
+    <a href="login.html">login</a>
+
+    <form action="signup.php" method="post">
+      <label for="username">username</label>
+      <input type="text" name="username" id="username" />
+      <label for="password">password</label>
       <input type="password" name="password" id="password" />
-      <button type="submit">Signup</button>
+      <label for="email">email</label>
+      <input type="email" name="email" id="email" />
+      <input type="submit" value="signup" />
     </form>
-    <a href="/login">Login</a>
   </body>
 </html>

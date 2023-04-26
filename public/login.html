@@ -4,16 +4,21 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>login</title>
+    <title>Login</title>
   </head>
   <body>
-    <form action="/login" method="POST">
-      <label for="email">Email</label>
-      <input type="email" name="email" id="email" />
-      <label for="password">Password</label>
+
+    <h1>Login</h1>
+
+    <a href="index.html">main page</a>
+    <a href="signup.html">signup</a>
+
+    <form action="login.php" method="post">
+      <label for="username">username</label>
+      <input type="text" name="username" id="username" />
+      <label for="password">password</label>
       <input type="password" name="password" id="password" />
-      <button type="submit">Login</button>
-    </form>
-    <a href="/register">Register</a>
+      <input type="submit" value="login" />
+    </form>    
   </body>
 </html>
