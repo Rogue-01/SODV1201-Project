@@ -16,7 +16,6 @@ app.get("/", (req, res) => {
   res.status(200).sendFile(__dirname + "/public/index.html");
 });
 
-
 app.get("/courses", (req, res) => {
   const { num, code } = req.query;
   let courses = JSON.parse(fs.readFileSync(coursesDb));
@@ -33,7 +32,6 @@ app.get("/courses", (req, res) => {
   res.status(200).json(courses);
 });
 
-
 app.get("/account/:id", (req, res) => {
   const { id } = req.params;
   const users = JSON.parse(fs.readFileSync(usersDb));
@@ -45,7 +43,6 @@ app.get("/account/:id", (req, res) => {
     res.status(404).json({ error: "User not found" });
   }
 });
-
 
 app.post("/users/login", (req, res) => {
   const { username, password } = req.body;
@@ -61,7 +58,6 @@ app.post("/users/login", (req, res) => {
     res.status(404).json({ error: "User not found" });
   }
 });
-
 
 app.post("/users/signup", (req, res) => {
   const { username, password } = req.body;
@@ -82,16 +78,14 @@ app.post("/users/signup", (req, res) => {
   }
 });
 
-
 app.patch("/account/:id/courses/add", (req, res) => {
   const { id } = req.params;
   const { course } = req.body;
-  const courses = JSON.parse(fs.readFileSync(coursesDb));
   const users = JSON.parse(fs.readFileSync(usersDb));
   const user = users.find((user) => user.id === id);
   if (!user) {
     res.status(401).json({ error: "User not found" });
-  } else if (!courses.find((c) => c.id === course)) {
+  } else if (!course) {
     res.status(400).json({ error: "Invalid course" });
   } else if (user.courses.includes(course)) {
     res.status(409).json({ error: "Course already added" });
@@ -101,7 +95,6 @@ app.patch("/account/:id/courses/add", (req, res) => {
     res.status(201).json({ courses: user.courses });
   }
 });
-
 
 app.patch("/account/:id/courses/remove", (req, res) => {
   const { id } = req.params;
