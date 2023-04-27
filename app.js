@@ -37,8 +37,8 @@ app.get("/account/:id", (req, res) => {
   const users = JSON.parse(fs.readFileSync(usersDb));
   const user = users.find((user) => user.id === id);
   if (user) {
-    const { password, ...userWithoutPassword } = user;
-    res.status(200).json(userWithoutPassword);
+    const { password, ...userData } = user;
+    res.status(200).json(userData);
   } else {
     res.status(404).json({ error: "User not found" });
   }
